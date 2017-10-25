@@ -1,0 +1,296 @@
+<html ng-app = 'myApp' lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Email Webpage</title>
+<style>
+table, tr , td {
+   border: 2px solid grey;
+   border-collapse: collapse;
+   padding: 5px;
+   font-size:17px;
+}
+table{
+  width: 100%;
+}
+table tr:nth-child(odd) {
+   background-color: #e7c296;
+}
+
+table tr:nth-child(even) {
+   background-color: #c2e0d4;
+}
+
+.row-header{
+ margin:0px auto;
+ padding:0px auto;
+}
+.row-content {
+ margin:0px auto;
+ padding: 10px 0px 10px 0px;
+ border-bottom: 1px ridge;
+ min-height:800px;
+}
+.row-footer{
+ background-color: #E4EAFC;
+ margin:0px auto;
+ padding: 10px 0px 10px 0px;
+}
+.jumbotron {
+ color:gery;
+}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+</head>
+<body style = "background:url(Trianglify.jpg);background-repeat:no-repeat;background-size:100% 100%">
+
+  <header class="jumbotron">
+        <div class="container">
+          <div class="row row-header">
+              <div class="col-xs-12 col-sm-9">
+                  <h1>ईमेल</h1>
+                  <p style="padding:20px;"></p>
+                  <h4 align="justify">We connect you with your near and dear!!</h4>
+              </div>
+          </div>
+        </div>
+  </header>
+
+  <div class = "container" ng-controller = "Setup">
+    <ul class="nav nav-pills" style = "padding-top:50px" >
+      <li ng-class="{active: atab == 'inbox'}"><a ng-click = "atab = 'inbox'"><strong style="font-size: 20px">Inbox</strong></a></li>
+      <li ng-class="{active: atab == 'sort'}"><a ng-click = "atab = 'sort'"><strong style="font-size: 20px">Starred</strong></a></li>
+      <li ng-class="{active: atab == 'sent'}"><a ng-click = "atab = 'sent'"><strong style="font-size: 20px">Sent</strong></a></li>
+      <li ng-class="{active: atab == 'trash'}"><a ng-click = "atab = 'trash'"><strong style="font-size: 20px">Trash</strong></a></li>
+  </ul>
+  <table class = "table-bordered" ng-show = "atab == 'inbox'">
+    <tbody>
+    <tr ng-repeat = "email in emails">
+      <td ng-click = "Display(email)">{{email.from}}</td>
+      <td ng-click = "Display(email)">{{email.subject}}</td>
+      <td ng-click = "Display(email)">{{email.date}}</td>
+      <td><a href = "#" ng-click = "SortIn($index)" style = "color:#894311"><i class="fa fa-star"></i></a></td>
+      <td><a href="#" ng-click="DeleteIn($index)"><strong style = "color:#894311">Delete</strong></a></td>
+    </tr>
+  </tbody>
+</table>
+
+<table class = "table-bordered" ng-show = "atab == 'sent'">
+  <tbody>
+  <tr ng-repeat = "email in sentmail">
+    <td ng-click = "Display(email)">{{email.to}}</td>
+    <td ng-click = "Display(email)">{{email.subject}}</td>
+    <td ng-click = "Display(email)">{{email.date | date:'MM/dd/yy'}}</td>
+    <td><a href = "#" ng-click = "SortSend($index)" style = "color:#894311"><i class="fa fa-star"></i></a></td>
+    <td><a href = "#" ng-click = "DeleteSend($index)"><strong style = "color:#894311">Delete</strong></a></td>
+  </tr>
+</tbody>
+</table>
+
+<table class = "table-bordered" ng-show = "atab == 'sort'">
+  <tbody>
+  <tr ng-repeat = "email in sortmail" ng-click = "Display(email)">
+    <td>{{email.from}}</td>
+    <td>{{email.subject}}</td>
+    <td>{{email.date | date:'MM/dd/yy'}}</td>
+    <td><a href = "#" ng-click = "DeleteSort($index)"><strong style = "color:#894311">Delete</strong></a></td>
+  </tr>
+</tbody>
+</table>
+
+<table class = "table-bordered" ng-show = "atab == 'trash'">
+  <tbody>
+  <tr ng-repeat = "email in trashmail">
+    <td ng-click = "Display(email)">{{email.from}}</td>
+    <td ng-click = "Display(email)">{{email.subject}}</td>
+    <td ng-click = "Display(email)">{{email.date | date:'MM/dd/yy'}}</td>
+    <td> <a data-toggle="modal" data-target="#myModal"><strong style = "color:#894311">Delete</strong></a></td>
+    <td><a href = "#" ng-click = "UndoDelete($index)"><strong style = "color:#894311">Undo</strong></a></td>
+  </tr>
+</tbody>
+</table>
+
+<div class="modal fade" id="myModal" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+      <h4>Are you sure you want to delete the email?<h4>
+      </div>
+      <div class="modal-footer">
+        <a href = "#" type="button" class="btn btn-warning" ng-click = "DeleteComplete($index)" data-dismiss="modal">Delete</a>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class = "modal" ng-show = "openmail">
+    <div class = "modal-header">
+        <button type = "button" class = "close" ng-click = "Clear()">X</button>
+        <h3>{{choose.subject}}</h3>
+    </div>
+    <div class = "modal-body">
+        <strong>From:</strong> {{choose.from}} <br>
+        <strong>To:</strong>{{choose.to}}<br>
+        <strong>Date:</strong> {{choose.date | date:'MM/dd/yy'}} <br>
+        <br>
+        <p>
+          Hello,<br>
+          <br>
+          <span style="white-space:pre">{{choose.body}}</span><br>
+          <br>
+          Thanks and regards!<br>
+        </p>
+    </div>
+    <div class = "modal-footer">
+      <a href = "#" class = "btn btn-primary" ng-click = "Reply()">Reply</a>
+      <a href = "#" class = "btn btn-primary" ng-click = "Forward()">Forward</a>
+      <a href = "#" class = "btn btn-primary" ng-click = "Clear()">Close</a>
+    </div>
+</div>
+<button class = "btn btn-primary" ng-click = "DisplayCompose()" ng-show = "atab == 'inbox'">Compose</button>
+<div class = "modal" ng-show = "composemail">
+    <div class = "modal-header">
+        <button type = "button" class = "close" ng-click = "ClearCompose()">X</button>
+        <h4>New Message</h4>
+    </div>
+    <div class = "modal-body">
+        <form>
+            <input type = "text" placeholder = "To" style = "width:80%;" ng-model = "compose.to"><br />
+            <input type = "text" placeholder = "Subject" style = "width:80%;" ng-model = "compose.subject"><br />
+            <textarea style = "width:90%;" rows = "8" ng-model = "compose.body"></textarea>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href = "#" class = "btn btn-primary" ng-click = "ClearCompose()">Close</a>
+        <a href = "#" class = "btn btn-primary" ng-click = "send()">Send</a>
+    </div>
+</div>
+</div>
+
+<footer style = "padding:100px;">
+    <div class="container">
+        <div class="row row-footer">
+            <div class="col-xs-12 col-sm-4">
+              <div class="nav navbar-nav" style="padding: 40px 10px;">
+                  <a class="btn btn-social-icon btn-google-plus" href="http://google.com/+"><i class="fa fa-google-plus"></i></a>
+                  <a class="btn btn-social-icon btn-facebook" href="http://www.facebook.com/profile.php?id="><i class="fa fa-facebook"></i></a>
+                  <a class="btn btn-social-icon btn-linkedin" href="http://www.linkedin.com/in/"><i class="fa fa-linkedin"></i></a>
+                  <a class="btn btn-social-icon btn-twitter" href="http://twitter.com/"><i class="fa fa-twitter"></i></a>
+                  <a class="btn btn-social-icon btn-youtube" href="http://youtube.com/"><i class="fa fa-youtube"></i></a>
+              </div>
+            </div>
+            <div class="col-xs-12">
+                <p align=center>Copyright 2017 ईमेल</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script  src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script>
+var app = angular.module('myApp', []);
+app.controller('Setup', function($scope) {
+$scope.emails = [{'from':'Hanisha','to':'jobs@indeed.com','subject':'Job application','date':'06/22/2017','body':'Could you please give me an update regading my application.'},
+  {'from':'Sridevi','to':'hodgitam@gmail.com','subject':'Leave application','date':'01/24/2017','body':'Could you please accept my leave application.'},
+  {'from':'Rao','to':'rao@randsca.net','subject':'Audit report','date':'06/16/2017','body':'The audit report is attached. Please refer to it.'},
+  {'from':'Neha','to':'paul@mail.usf.edu','subject':'Regarding final project','date':'04/30/2017','body':'I have a doubt regading the project.Please help me out.'},
+  {'from':'Siri','to':'neha@mail.usf.edu','subject':'Going on a vacation','date':'09/11/2016','body':'I am going on a vacation to Hawai!!!'}
+];
+$scope.openmail = false;
+$scope.composemail = false;
+$scope.Display = function (email) {
+$scope.openmail = true;
+$scope.choose = email;
+};
+$scope.Clear = function () {
+$scope.openmail = false;
+};
+$scope.DisplayCompose = function () {
+$scope.composemail = true;
+};
+$scope.ClearCompose = function () {
+$scope.composemail = false;
+};
+$scope.Reply = function() {
+$scope.openmail = false;
+$scope.compose ={};
+angular.copy($scope.choose, $scope.compose);
+$scope.compose.body =
+    "\n"+
+    "\n---------------------------------\n"
+    + "From: " + $scope.compose.from + "\n"
+    + "Sent: " + $scope.compose.date + "\n"
+    + "To: " + $scope.compose.to + "\n"
+    + "Subject: " + $scope.compose.subject + "\n"
+    + $scope.compose.body;
+    $scope.compose.subject = "RE: " + $scope.compose.subject;
+    $scope.compose.to = $scope.compose.from;
+    $scope.composemail = true;
+    $scope.compose.from = "me";
+};
+$scope.Forward = function() {
+$scope.openmail = false;
+$scope.compose ={};
+angular.copy($scope.choose, $scope.compose);
+$scope.compose.body =
+    "\n"+
+    "\n---------------------------------\n"
+    + "From: " + $scope.compose.from + "\n"
+    + "Sent: " + $scope.compose.date + "\n"
+    + "To: " + $scope.compose.to + "\n"
+    + "Subject: " + $scope.compose.subject + "\n"
+    + $scope.compose.body;
+    $scope.compose.subject = "Forward: " + $scope.compose.subject;
+    $scope.compose.to = "";
+    $scope.compose.from = "me";
+    $scope.composemail = true;
+};
+$scope.sentmail = [];
+$scope.compose = {};
+$scope.atab = "inbox";
+$scope.send = function () {
+$scope.composemail = false;
+$scope.sentmail.splice(0,0,$scope.compose);
+$scope.compose.date = new Date();
+$scope.compose.from = "me";
+};
+$scope.trashmail = [];
+$scope.DeleteIn = function (index) {
+$scope.trashmail.push($scope.emails[index]);
+$scope.emails.splice(index,1);
+};
+$scope.DeleteSend = function (index) {
+$scope.trashmail.push($scope.sentmail[index]);
+$scope.sentmail.splice(index,1);
+};
+$scope.DeleteSort = function (index) {
+$scope.trashmail.push($scope.sortmail[index]);
+$scope.sortmail.splice(index,1);
+};
+$scope.DeleteComplete = function (index) {
+$scope.trashmail.splice(index,1);
+};
+$scope.sortmail = [];
+$scope.SortIn = function (index) {
+$scope.sortmail.push($scope.emails[index]);
+$scope.emails.splice(index,1);
+};
+$scope.SortSend = function (index) {
+$scope.sortmail.push($scope.sentmail[index]);
+$scope.sentmail.splice(index,1);
+};
+$scope.UndoDelete = function(index){
+  $scope.emails.push($scope.trashmail[index]);
+  $scope.trashmail.splice(index,1);
+};
+});
+</script>
+</body>
+</html>

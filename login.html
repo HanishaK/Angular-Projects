@@ -1,0 +1,90 @@
+<html>
+<head>
+  <meta charset="utf-8">
+<title>Login page</title>
+<style>
+body {
+    position: relative;
+}
+#form-wrapper {
+    width: 300px;
+    height: 200px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -100px;
+    margin-left: -150px;
+    color: white;
+}
+input {
+    width: 35%;
+    padding: 12px 20px;
+    margin: 8px 20px;
+    display: inline-block;
+}
+}
+input[type="button"]:hover {opacity: 0.8;}
+input[type="reset"]:hover {opacity: 0.8;}
+.form-all {
+border: medium solid white;
+padding-bottom: 50px;
+padding-left: 30px;
+background-color: grey;
+}
+.jumbotron {
+ color:gery;
+}
+</style>
+</head>
+<body style = "background:url(Trianglify.jpg);background-repeat:no-repeat;background-size:100% 100%">
+  <header class="jumbotron">
+        <div class="container">
+          <div class="row row-header">
+              <div class="col-xs-12 col-sm-9">
+                  <h1>ईमेल</h1>
+                  <p style="padding:20px;"></p>
+                  <h4 align="justify">We connect you with your near and dear!!</h4>
+              </div>
+          </div>
+        </div>
+  </header>
+<div class="container">
+  <div class="row row-content">
+<form name = "login" style:"justify;">
+  <div id = "form-wrapper" class = "form-all">
+    <h1><font face="Century Gothic">Login</font></h1><br>
+<label><font face="Bookman Old Style" style="font-size:17px;">Email</font></label><input type = "email" name = "emailid" required placeholder = "Enter Email"><br>
+<label><font face="Bookman Old Style" style="font-size:17px;">Password</font></lable><br><input type = "password" name = "pwd" required placeholder = "Password"><br>
+<button type = "button" class = "btn btn-info" onclick = "check(this.form)">Submit</button>
+<button type = "reset" class = "btn btn-default">Cancel</button>
+</form>
+<form type ="checkbox">
+<input type = "checkbox" checked = "checked"><strong style="font-size:15px">Remember me</strong>
+<span class = "psw" style="font-size:15px;padding-left: 30px;">Forgot <a style="font-size:15px;color:black;" href = "#">password?</a></span><br>
+</div>
+</form>
+<div>
+</div>
+<script language = "javascript">
+function check(form)
+{
+ /*the following code checkes whether the entered userid and password are matching*/
+ if(form.emailid.value == "admin@gmail.com" && form.pwd.value == "admin")
+  {
+  location.href = "email.html"/*opens the target page while Id & password matches*/
+  }
+ else if(form.emailid.value == "" || form.pwd.value == "")
+ {
+   alert("Invalid entry...please fill in the details properly!!");
+  }
+  else {
+    alert("Username/Password is incorrect!");
+  }
+}
+</script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script  src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+</body>
+</html>
